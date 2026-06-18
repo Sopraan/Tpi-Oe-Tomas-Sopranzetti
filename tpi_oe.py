@@ -189,3 +189,203 @@ def chatbot():
 
     print("\nProceso finalizado.")
     print("Gracias por utilizar el sistema.")
+
+def mostrar_tickets():
+
+    try:
+
+        with open("tickets.csv", "r", encoding="utf-8") as archivo:
+
+            lector = csv.reader(archivo)
+
+            print("\n" + "=" * 70)
+            print("TICKETS GENERADOS")
+            print("=" * 70)
+
+            for fila in lector:
+
+                print(" | ".join(fila))
+
+    except FileNotFoundError:
+
+        print("\nNo existe el archivo de tickets.")
+
+# Permite a un técnico actualizar el estado de un ticket existente.
+def cambiar_estado_ticket():
+
+    try:
+
+        with open("tickets.csv", "r", encoding="utf-8") as archivo:
+
+            tickets = list(csv.reader(archivo))
+
+        if len(tickets) <= 1:
+
+            print("\nNo hay tickets para gestionar.")
+            return
+
+        print("\nTICKETS DISPONIBLES")
+        print("-" * 70)
+
+        for i in range(1, len(tickets)):
+
+            print(
+                f"{i} - "
+                f"{tickets[i][1]} | "
+                f"{tickets[i][2]} | "
+                f"{tickets[i][3]}"
+            )
+
+        while True:
+
+            try:
+
+                opcion = int(input("\nSeleccione un ticket: "))
+
+                if 1 <= opcion < len(tickets):
+                    break
+
+                print("Ticket inexistente.")
+
+            except ValueError:
+
+                print("Debe ingresar un número.")
+
+        print("\nEstados posibles")
+        print("1. Pendiente")
+        print("2. En Proceso")
+        print("3. Resuelto")
+
+        while True:
+
+            nuevo_estado = input(
+                "Seleccione nuevo estado: "
+            ).strip()
+
+            if nuevo_estado == "1":
+
+                tickets[opcion][3] = "Pendiente"
+                break
+
+            elif nuevo_estado == "2":
+
+                tickets[opcion][3] = "En Proceso"
+                break
+
+            elif nuevo_estado == "3":
+
+                tickets[opcion][3] = "Resuelto"
+                break
+
+            else:
+
+                print("Opción inválida.")
+
+        with open(
+            "tickets.csv",
+            "w",
+            encoding="utf-8",
+            newline=""
+        ) as archivo:
+
+            escritor = csv.writer(archivo)
+
+            escritor.writerows(tickets)
+
+        print("\nEstado actualizado correctamente.")
+
+    except FileNotFoundError:
+
+        print("\nNo existe tickets.csv")
+
+# Menú exclusivo para el técnico especializado.
+def menu_tecnico():
+
+    usuario = input("Usuario: ").strip()
+    clave = input("Contraseña: ").strip()
+
+    if usuario != "admin" or clave != "1234":
+
+        print("\nCredenciales incorrectas.")
+        return
+
+    while True:
+
+        print("\n" + "=" * 50)
+        print("MENU TECNICO")
+        print("=" * 50)
+        print("1. Ver tickets")
+        print("2. Cambiar estado de ticket")
+        print("3. Volver")
+        print("=" * 50)
+
+        opcion = input(
+            "Seleccione una opción: "
+        ).strip()
+
+        if opcion == "1":
+
+            mostrar_tickets()
+
+        elif opcion == "2":
+
+            cambiar_estado_ticket()
+
+        elif opcion == "3":
+
+            break
+
+        else:
+
+            print("Opción inválida.")
+
+# Muestra las opciones principales del sistema.
+def mostrar_menu():
+
+    print("\n" + "=" * 50)
+    print("SISTEMA DE SOPORTE TÉCNICO")
+    print("=" * 50)
+    print("1. Realizar consulta")
+    print("2. Acceso técnico")
+    print("3. Ver tickets generados")
+    print("4. Salir")
+    print("=" * 50)
+
+# Controla la navegación entre los distintos menús.
+def main():
+
+    inicializar_tickets()
+
+    while True:
+
+        mostrar_menu()
+
+        opcion = input(
+            "Seleccione una opción: "
+        ).strip()
+
+        if opcion == "1":
+
+            chatbot()
+
+        elif opcion == "2":
+
+            menu_tecnico()
+
+        elif opcion == "3":
+
+            mostrar_tickets()
+
+        elif opcion == "4":
+
+            print("\nGracias por utilizar el sistema.")
+            print("Programa finalizado.")
+            break
+
+        else:
+
+            print("\nOpción inválida.")
+            print("Intente nuevamente.")
+
+
+main()
